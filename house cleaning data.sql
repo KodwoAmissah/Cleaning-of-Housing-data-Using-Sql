@@ -112,8 +112,19 @@ when SoldAsVacant='N' then 'No'
 Else SoldAsVacant
 End
 
+--remove duplicates
+select *,
+ROW_NUMBER()over (partition by ParcelId,PropertyAddress,SalePrice order by UniqueID) as row_mum
+from dbo.nashme;
+
+-- put duplicate query in a CTE to make removal of duplicates easier
+with rows as 
+(select *,
+ROW_NUMBER()over (partition by ParcelId,PropertyAddress,SalePrice order by UniqueID) as row_mum
+from dbo.nashme)
+delete from rows 
+where row_mum > 1
+ 
 --Remove Columns we changed
 Alter table housingprojecte..House
 Drop column OwnerAddress,PropertyAddress
-
- -
